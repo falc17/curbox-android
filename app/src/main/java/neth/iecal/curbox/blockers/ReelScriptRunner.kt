@@ -10,12 +10,14 @@ import neth.iecal.curbox.blockers.uihider.script.Parser
 import neth.iecal.curbox.blockers.uihider.script.ScriptError
 import neth.iecal.curbox.blockers.uihider.script.Stmt
 import neth.iecal.curbox.hardcoded.ReelAppConfig.Companion.INSTAGRAM_DM_REEL_MARKER
+import neth.iecal.curbox.hardcoded.ReelAppConfig.Companion.INSTAGRAM_SAVED_REEL_MARKER
 import neth.iecal.curbox.hardcoded.ReelAppConfig.Companion.reelData
 import neth.iecal.curbox.services.BaseBlockingService
 
 data class ReelDetection(
     val comparator: String,
     val isInstagramReelOpenedFromDmInbox: Boolean = false,
+    val isInstagramReelSavedOrLiked: Boolean = false,
     val position: Int? = null
 )
 
@@ -26,10 +28,11 @@ internal fun reelDetectionFromScriptResult(
     positionMarker: String? = null
 ): ReelDetection {
     val openedFromDmInbox = result.startsWith(INSTAGRAM_DM_REEL_MARKER)
-    var comparator = if (openedFromDmInbox) {
-        result.removePrefix(INSTAGRAM_DM_REEL_MARKER)
-    } else {
-        result
+    val savedOrLiked = result.startsWith(INSTAGRAM_SAVED_REEL_MARKER)
+    var comparator = when {
+        openedFromDmInbox -> result.removePrefix(INSTAGRAM_DM_REEL_MARKER)
+        savedOrLiked -> result.removePrefix(INSTAGRAM_SAVED_REEL_MARKER)
+        else -> result
     }
 
     // The position line is bookkeeping, so it is removed before the app cleanser sees the text.
@@ -48,6 +51,7 @@ internal fun reelDetectionFromScriptResult(
     return ReelDetection(
         comparator = comparisonResultCleanser(comparator),
         isInstagramReelOpenedFromDmInbox = openedFromDmInbox,
+        isInstagramReelSavedOrLiked = savedOrLiked,
         position = position
     )
 }

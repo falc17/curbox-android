@@ -116,6 +116,12 @@ class ReelBlockerFragment : Fragment() {
                 viewModel.setAllowInstagramReelsFromDmInbox(isChecked)
             }
         }
+
+        binding.checkboxAllowInstagramSavedReels.setOnCheckedChangeListener { _, isChecked ->
+            if (!isUpdatingUi) {
+                viewModel.setAllowInstagramReelsSavedOrLiked(isChecked)
+            }
+        }
     }
 
     private fun observeViewModel() {
@@ -148,6 +154,8 @@ class ReelBlockerFragment : Fragment() {
                 )
                 binding.checkboxAllowInstagramDmReels.isChecked =
                     config.allowInstagramReelsFromDmInbox
+                binding.checkboxAllowInstagramSavedReels.isChecked =
+                    config.allowInstagramReelsSavedOrLiked
                 isUpdatingUi = false
             }
         }

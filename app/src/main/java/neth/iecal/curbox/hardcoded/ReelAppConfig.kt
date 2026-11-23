@@ -7,6 +7,7 @@ class ReelAppConfig {
     companion object {
         const val INSTAGRAM_PACKAGE = "com.instagram.android"
         const val INSTAGRAM_DM_REEL_MARKER = "\u001Fcurbox:instagram_dm_inbox:\u001F"
+        const val INSTAGRAM_SAVED_REEL_MARKER = "\u001Fcurbox:instagram_saved_or_liked:\u001F"
 
         /** Marks the script report line that carries the reel position, such as a recycler row. */
         const val REEL_POSITION_MARKER = "\u001Fcurbox:reel_position:\u001F"
@@ -49,6 +50,19 @@ class ReelAppConfig {
                 return null
             }
 
+            # A liked or saved reel shows the undo label on its button. The label must match exactly, so
+            # a caption or comment that merely contains the word cannot unlock a reel. A wrong label
+            # fails closed: the reel stays blocked. Matching by the page bounds, as findInPage does,
+            # keeps neighbouring pages out. English labels only for now.
+            fn isSavedOrLiked(page) {
+                for label in ["Unlike", "Remove from saved"] {
+                    for node in findAll(desc=label) {
+                        if isOnScreen(node) and node.cy >= page.top and node.cy <= page.bottom { return true }
+                    }
+                }
+                return false
+            }
+
             viewer = findOnScreen("clips_viewer_view_pager")
             if viewer == null { return null }
 
@@ -59,6 +73,7 @@ class ReelAppConfig {
             page = findFullPage(viewer)
             if page == null { return prefix }
             if findInPage(page, "clips_ufi_component") == null { return null }
+            if prefix == "" and isSavedOrLiked(page) { prefix = "$INSTAGRAM_SAVED_REEL_MARKER" }
 
             # The first line must stay the author because the counter dedupes by it.
             author = findInPage(page, "clips_author_username")

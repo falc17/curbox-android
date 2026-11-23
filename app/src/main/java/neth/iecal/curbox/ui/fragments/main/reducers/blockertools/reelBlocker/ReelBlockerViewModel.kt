@@ -83,6 +83,13 @@ class ReelBlockerViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    fun setAllowInstagramReelsSavedOrLiked(allow: Boolean) {
+        viewModelScope.launch {
+            dataStoreManager.updateAllowInstagramReelsSavedOrLiked(allow)
+            requestReelBlockerRefresh()
+        }
+    }
+
     fun getReelTimeConfig(): ReelTimeConfig {
         return _reelBlockerConfig.value.config?.schedule ?: ReelTimeConfig()
     }

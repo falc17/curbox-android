@@ -170,7 +170,8 @@ class AppBlockerService : BaseBlockingService() {
                     reelBlocker.doViewBlockerCheck(
                         event,
                         reelComparator,
-                        reelDetection?.isInstagramReelOpenedFromDmInbox == true
+                        reelDetection?.isInstagramReelOpenedFromDmInbox == true,
+                        reelDetection?.isInstagramReelSavedOrLiked == true
                     )
                     keywordBlocker.checkIfUnsupportedBrowser(event)
                     if (BuildConfig.SUPPORTS_UI_HIDER) {

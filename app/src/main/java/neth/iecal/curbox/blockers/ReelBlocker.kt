@@ -61,7 +61,8 @@ class ReelBlocker : BaseBlocker() {
     fun doViewBlockerCheck(
         event: AccessibilityEvent?,
         dynamicComparator: String?,
-        isInstagramReelOpenedFromDmInbox: Boolean
+        isInstagramReelOpenedFromDmInbox: Boolean,
+        isInstagramReelSavedOrLiked: Boolean = false
     ){
         fun showWarningScreen(viewId: String){
             if(service.isDelayOver(3000)) {
@@ -91,6 +92,10 @@ class ReelBlocker : BaseBlocker() {
         if (pkg == ReelAppConfig.INSTAGRAM_PACKAGE &&
             isInstagramReelOpenedFromDmInbox &&
             reelBlockerConfig.allowInstagramReelsFromDmInbox
+        ) return
+        if (pkg == ReelAppConfig.INSTAGRAM_PACKAGE &&
+            isInstagramReelSavedOrLiked &&
+            reelBlockerConfig.allowInstagramReelsSavedOrLiked
         ) return
 
         val viewId = pkg

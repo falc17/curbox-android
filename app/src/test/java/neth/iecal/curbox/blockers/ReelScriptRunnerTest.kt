@@ -2,6 +2,7 @@ package neth.iecal.curbox.blockers
 
 import neth.iecal.curbox.hardcoded.ReelAppConfig
 import neth.iecal.curbox.hardcoded.ReelAppConfig.Companion.INSTAGRAM_DM_REEL_MARKER
+import neth.iecal.curbox.hardcoded.ReelAppConfig.Companion.INSTAGRAM_SAVED_REEL_MARKER
 import neth.iecal.curbox.hardcoded.ReelAppConfig.Companion.REEL_POSITION_MARKER
 import neth.iecal.curbox.hardcoded.ReelAppConfig.Companion.reelData
 import org.junit.Assert.assertEquals
@@ -62,5 +63,17 @@ class ReelScriptRunnerTest {
 
         assertEquals("AUTHOR CAPTION", detection.comparator)
         assertTrue(detection.isInstagramReelOpenedFromDmInbox)
+    }
+
+    @Test
+    fun savedOrLikedMarkerIsRemovedBeforeComparatorIsConsumed() {
+        val detection = reelDetectionFromScriptResult(
+            "${INSTAGRAM_SAVED_REEL_MARKER}author caption",
+            { it.uppercase() }
+        )
+
+        assertEquals("AUTHOR CAPTION", detection.comparator)
+        assertTrue(detection.isInstagramReelSavedOrLiked)
+        assertFalse(detection.isInstagramReelOpenedFromDmInbox)
     }
 }

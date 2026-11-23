@@ -78,6 +78,18 @@ class ReelBlockerRestrictionComparatorTest {
         )
     }
     @Test
+    fun allowingInstagramReelsSavedOrLikedIsWeaker() {
+        val old = ReelBlocker(isActive = true)
+
+        assertFalse(
+            RestrictionComparator.reelBlocker(
+                old,
+                old.copy(allowInstagramReelsSavedOrLiked = true)
+            )
+        )
+    }
+
+    @Test
     fun expandingAllowedHoursIsWeaker() {
         val old = scheduledReels(9, 10)
         val expanded = scheduledReels(0, 24)
